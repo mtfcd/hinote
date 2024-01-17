@@ -1,4 +1,6 @@
-# Heynote
+# Hinote
+
+fork from https://github.com/heyman/heynote. and change it to use tauri instead of electron. but it didnot reduce too much memory usage. there is a process "tauri://localhost" use a lot of memory. don't know why. Maybe a bug of tauri: https://github.com/tauri-apps/tauri/issues/4026.
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/heyman/heynote)](https://github.com/heyman/heynote/releases)
 [![Build Status](https://github.com/heyman/heynote/workflows/Tests/badge.svg)](https://github.com/heyman/heynote/actions?query=workflow%3ATests)

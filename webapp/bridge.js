@@ -1,4 +1,5 @@
-import { SETTINGS_CHANGE_EVENT, OPEN_SETTINGS_EVENT } from "../electron/constants";
+const SETTINGS_CHANGE_EVENT = "settings-change"
+const OPEN_SETTINGS_EVENT = "open-settings"
 
 const mediaMatch = window.matchMedia('(prefers-color-scheme: dark)')
 let themeCallback = null
@@ -21,7 +22,7 @@ if (uaPlatform.indexOf("Win") !== -1) {
         isWindows: true,
         isLinux: false,
     }
-}  else if (uaPlatform.indexOf("Linux") !== -1) {
+} else if (uaPlatform.indexOf("Linux") !== -1) {
     platform = {
         isMac: false,
         isWindows: false,
@@ -76,7 +77,7 @@ if (settingsData !== null) {
 
 const Heynote = {
     platform: platform,
-    defaultFontFamily: "Hack", 
+    defaultFontFamily: "Hack",
     defaultFontSize: isMobileDevice ? 16 : 12,
 
     buffer: {
@@ -90,11 +91,11 @@ const Heynote = {
         },
 
         async saveAndQuit(content) {
-            
+
         },
 
         onChangeCallback(callback) {
-            
+
         },
     },
 
@@ -144,7 +145,7 @@ const Heynote = {
         if (currencyData !== null) {
             return currencyData
         }
-        const response = await fetch("https://currencies.heynote.com/rates.json", {cache: "no-cache"})
+        const response = await fetch("https://currencies.heynote.com/rates.json", { cache: "no-cache" })
         currencyData = JSON.parse(await response.text())
         return currencyData
     },
@@ -154,4 +155,4 @@ const Heynote = {
     },
 }
 
-export { Heynote, ipcRenderer}
+export { Heynote, ipcRenderer }
