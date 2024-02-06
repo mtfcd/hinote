@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Hinote",
-    "version": "0.0.4"
+    "version": "0.0.5"
   },
   "tauri": {
     "allowlist": {
@@ -36,7 +36,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "hinote2",
+        "title": "hinote",
         "width": 800,
         "height": 600
       }
