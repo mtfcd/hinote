@@ -1,13 +1,16 @@
-import './css/application.sass'
+import "./css/application.sass";
 
-import { createApp } from 'vue'
-import App from './components/App.vue'
-import { loadCurrencies } from './currency'
+import { createApp } from "vue";
+import App from "./components/App.vue";
+import { loadCurrencies } from "./currency";
 
-const app = createApp(App)
-app.mount('#app')
+const app = createApp(App);
+app.mount("#app").$nextTick(() => {
+  // hide loading screen
+  postMessage({ payload: "removeLoading" }, "*");
+});
 //console.log("test:", app.hej.test)
 
 // load math.js currencies
-loadCurrencies()
-setInterval(loadCurrencies, 1000 * 3600 * 4)
+loadCurrencies();
+setInterval(loadCurrencies, 1000 * 3600 * 4);

@@ -1,63 +1,40 @@
-name: Build/release
-
-on: push
+name: "publish"
+on:
+  label:
+    types:
+      - created
 
 jobs:
-  publish:
-    runs-on: ${{ matrix.os }}
-    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-    permissions:
-      contents: write
-
+  publish-tauri:
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        #os: [macos-latest, windows-latest]
+        platform: [macos-latest, ubuntu-latest, windows-latest]
 
+    runs-on: ${{ matrix.platform }}
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v1
-
-      - name: Install Node.js, NPM and Yarn
+      - uses: actions/checkout@v2
+      - name: setup node
         uses: actions/setup-node@v1
         with:
           node-version: 18
-      
-      - name: Prepare for app notarization
-        if: startsWith(matrix.os, 'macos')
-        # Import Apple API key for app notarization on macOS
-        run: |
-          mkdir -p ~/private_keys/
-          echo '${{ secrets.apple_api_key }}' > ~/private_keys/AuthKey.p8
-
-      - name: Build/release Electron app
-        #continue-on-error: true
-        uses: samuelmeuli/action-electron-builder@v1
+      - name: install Rust stable
+        uses: actions-rs/toolchain@v1
         with:
-          # Specify electron-builder config file
-          args: -c electron-builder.json5
-
-          # NPM script to execute before electron-builder
-          build_script_name: prebuild
-
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
-
-          # Used for mac signing
-          mac_certs: ${{ secrets.mac_certs }}
-          mac_certs_password: ${{ secrets.mac_certs_password }}
-
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: true
-          #release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          toolchain: stable
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+      - name: install app dependencies and build it
+        run: npm i && npm run tauri build
+      - uses: tauri-apps/tauri-action@v0
         env:
-          # macOS notarization API key
-          APPLE_API_KEY: ~/private_keys/AuthKey.p8
-          APPLE_API_KEY_ID: ${{ secrets.apple_api_key_id }}
-          APPLE_API_KEY_ISSUER: ${{ secrets.apple_api_key_issuer_id }}
-      
-      #- name: Print notarization-error.log
-      #  run: cat notarization-error.log
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: hinote-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          releaseName: "__VERSION__"
+          releaseBody: "See the assets to download this version and install."
+          releaseDraft: true
+          prerelease: false
