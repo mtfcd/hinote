@@ -1,7 +1,8 @@
 name: "publish"
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - release
 
 jobs:
   publish-tauri:
@@ -16,7 +17,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 18
+          node-version: 20
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
         with:
